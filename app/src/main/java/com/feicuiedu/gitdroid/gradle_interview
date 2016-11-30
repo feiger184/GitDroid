@@ -1,0 +1,28 @@
+1. gradle里面的内容
+
+声明是Android程序
+apply plugin: 'com.android.application'
+
+
+android {
+    compileSdkVersion 23编译的SDK的版本
+    buildToolsVersion "23.0.3"build-tools的版本
+
+    defaultConfig {
+        applicationId "com.feicuiedu.gitdroid"包名
+        minSdkVersion 19最小SDK版本
+        targetSdkVersion 23目标版本
+        versionCode 1版本，如果有更新，会加1
+        versionName "1.0"版本信息
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {}
+
+2. git上传代码到github
