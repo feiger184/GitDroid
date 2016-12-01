@@ -2,6 +2,9 @@ package com.feicuiedu.gitdroid;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -75,6 +78,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    /**
+     * 1. 创建Fragment
+     * 2. 切换Fragment:提供一个方法，根据传入的Fragment来进行切换
+     * 3.
+     *
+     */
+    private void replaceFragment(Fragment fragment){
+        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.container,fragment);
+        fragmentTransaction.commit();
+    }
+
     //主要做了我们基本登录信息的改变
     @Override
     protected void onStart() {
@@ -115,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
             mDrawerLayout.closeDrawer(GravityCompat.START);
+        }else {
+            super.onBackPressed();
         }
     }
 }
