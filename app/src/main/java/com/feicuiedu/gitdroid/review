@@ -8,9 +8,21 @@
           完善一下
           热门仓库
 
-
-
 2. 网络请求Retrofit：
     1. http基本知识
     2. OkHttp
     3. Retrofit
+
+总结：
+项目搭建：
+1. 主页面：
+    toolbar使用
+    DrawerLayout：抽屉的效果，侧滑
+    NavigationView
+    切换不同的Fragment
+2. 最热门：ViewPager+Tablayout
+
+明天：热门仓库
+     网络请求
+
+

@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.feicuiedu.gitdroid.commons.ActivityUtils;
+import com.feicuiedu.gitdroid.github.HotRepoFragment;
 import com.feicuiedu.gitdroid.login.LoginActivity;
 
 import butterknife.BindView;
@@ -32,6 +33,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Button mBtnLogin;
     private ImageView mIvIcon;
     private ActivityUtils mActivityUtils;
+
+    //切换的Fragment
+    private HotRepoFragment mHotRepoFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,12 +80,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 finish();
             }
         });
+
+        // 在主页面，默认显示的是热门仓库Fragment
+        mHotRepoFragment = new HotRepoFragment();
+        replaceFragment(mHotRepoFragment);
     }
 
     /**
      * 1. 创建Fragment
      * 2. 切换Fragment:提供一个方法，根据传入的Fragment来进行切换
-     * 3.
+     * 3. 展示：1. 默认展示 2. 切换时
      *
      */
     private void replaceFragment(Fragment fragment){
@@ -103,17 +111,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (item.isChecked()){
             item.setChecked(false);
         }
+        // TODO: 2016/12/1 切换视图
         switch (item.getItemId()){
 
             // 最热门
             case R.id.github_hot_repo:
-                // TODO: 2016/12/1 切换到最热门的视图
+                if (mHotRepoFragment.isAdded()){
+                    replaceFragment(mHotRepoFragment);
+                }
                 break;
             // 开发者
             case R.id.github_hot_coder:
+
                 break;
             // 我的收藏
             case R.id.arsenal_my_repo:
+
                 break;
             // 每日干货
             case R.id.tips_daily:

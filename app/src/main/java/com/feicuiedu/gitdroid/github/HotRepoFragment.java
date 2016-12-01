@@ -13,6 +13,7 @@ import com.feicuiedu.gitdroid.R;
  * Created by gqq on 2016/12/1.
  */
 
+// 热门仓库(最热门)
 public class HotRepoFragment extends Fragment{
 
     @Nullable
