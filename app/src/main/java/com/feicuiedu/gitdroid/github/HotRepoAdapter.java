@@ -23,4 +23,10 @@ public class HotRepoAdapter extends FragmentPagerAdapter{
     public int getCount() {
         return 10;
     }
+
+    // 拿到ViewPager的标题
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return "java"+position;
+    }
 }
