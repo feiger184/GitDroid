@@ -14,4 +14,8 @@ public interface GithubApi {
     String CLIENT_SECRET = "dea61db22c9aa008ac1733730bd2a763d6648047";
     String AUTH_SCOPE= "user,public_repo,repo";
 
+    String CALL_BACK = "feicui";
+
+    String AUTH_URL = "https://github.com/login/oauth/authorize?client_id="+CLIENT_ID+"&scope="+AUTH_SCOPE;
+
 }

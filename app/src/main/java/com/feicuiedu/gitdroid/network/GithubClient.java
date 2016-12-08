@@ -44,9 +44,4 @@ public class GithubClient implements GithubApi{
         // 实现Api接口请求
         mGithubApi = retrofit.create(GithubApi.class);
     }
-
-    @Override
-    public Call getData() {
-        return mGithubApi.getData();
-    }
 }
