@@ -12,6 +12,7 @@ import android.webkit.WebViewClient;
 
 import com.feicuiedu.gitdroid.R;
 import com.feicuiedu.gitdroid.network.GithubApi;
+import com.feicuiedu.gitdroid.network.GithubClient;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,6 +38,12 @@ public class LoginActivity extends AppCompatActivity {
      * 2. 授权，根据申请时填写的Callback，给一个临时的授权码code
      * 3. code换取Token：进行网络请求
      * 4. 根据Token获取用户信息
+     *
+     * 1. code 获取Token
+     *      1. 构建请求：POST 表单提交(键值对)
+     *      2. 执行请求：在Client类里面实现了方法
+     *                  执行
+     *                  利用MVP模式来进行
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,15 +88,17 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
-            //页面刷新，可以
+            //页面刷新
             Uri uri = Uri.parse(url);
+
+            // 通过判断
             if (GithubApi.CALL_BACK.equals(uri.getScheme())){
                 String code = uri.getQueryParameter("code");
                 // 得到了我们的code值,获取Token
                 Log.e("TAG","临时的授权码："+code);
+
                 return true;
             }
-
             return super.shouldOverrideUrlLoading(view, url);
         }
     };
