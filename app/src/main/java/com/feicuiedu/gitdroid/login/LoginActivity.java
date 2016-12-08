@@ -96,7 +96,8 @@ public class LoginActivity extends AppCompatActivity {
                 String code = uri.getQueryParameter("code");
                 // 得到了我们的code值,获取Token
                 Log.e("TAG","临时的授权码："+code);
-
+                // 根据code去进行请求得到Token
+                new LoginPresenter().login(code);
                 return true;
             }
             return super.shouldOverrideUrlLoading(view, url);
