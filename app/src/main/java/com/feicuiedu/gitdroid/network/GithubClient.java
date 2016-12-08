@@ -2,6 +2,7 @@ package com.feicuiedu.gitdroid.network;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -40,6 +41,12 @@ public class GithubClient implements GithubApi{
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
+        // 实现Api接口请求
         mGithubApi = retrofit.create(GithubApi.class);
+    }
+
+    @Override
+    public Call getData() {
+        return mGithubApi.getData();
     }
 }
