@@ -44,7 +44,7 @@ public class HotRepoFragment extends Fragment {
          * 3. 完善标题的展示和联动
          *
          */
-        HotRepoAdapter adapter = new HotRepoAdapter(getChildFragmentManager());
+        HotRepoAdapter adapter = new HotRepoAdapter(getChildFragmentManager(),getContext());
 
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);// 绑定ViewPager

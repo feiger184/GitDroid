@@ -1,6 +1,9 @@
 package com.feicuiedu.gitdroid.network;
 
+import com.feicuiedu.gitdroid.github.repolist.model.RepoResult;
+import com.feicuiedu.gitdroid.login.TokenInterceptor;
 import com.feicuiedu.gitdroid.login.model.AccessToken;
+import com.feicuiedu.gitdroid.login.model.User;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -8,6 +11,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Field;
+import retrofit2.http.Query;
 
 /**
  * Created by gqq on 2016/12/8.
@@ -35,6 +39,7 @@ public class GithubClient implements GithubApi{
         // 初始化OkhttpClient
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
+                .addInterceptor(new TokenInterceptor())
                 .build();
 
         // 初始化Retrofit
@@ -51,5 +56,15 @@ public class GithubClient implements GithubApi{
     @Override
     public Call<AccessToken> getOAuthToken(@Field("client_id") String clientId, @Field("client_secret") String clientSecret, @Field("code") String code) {
         return mGithubApi.getOAuthToken(clientId, clientSecret, code);
+    }
+
+    @Override
+    public Call<User> getUser() {
+        return mGithubApi.getUser();
+    }
+
+    @Override
+    public Call<RepoResult> searchRepos(@Query("q") String q, @Query("page") int page) {
+        return mGithubApi.searchRepos(q, page);
     }
 }

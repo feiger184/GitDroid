@@ -6,10 +6,10 @@
 
     <!--&lt;!&ndash;Pull-To-Refresh&ndash;&gt;-->
     <!--&lt;!&ndash;SwipeRefreshLayout&ndash;&gt;-->
-    <!--<in.srain.cube.views.ptr.PtrClassicFrameLayout-->
-        <!--android:id="@+id/ptrClassicFrameLayout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
+    <in.srain.cube.views.ptr.PtrClassicFrameLayout
+        android:id="@+id/ptrClassicFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <ListView
             android:id="@+id/lvRepos"
             android:layout_width="match_parent"
@@ -17,7 +17,7 @@
             android:background="@android:color/white"
             android:divider="@null"
             android:visibility="visible"/>
-    <!--</in.srain.cube.views.ptr.PtrClassicFrameLayout>-->
+    </in.srain.cube.views.ptr.PtrClassicFrameLayout>
 
     <TextView
         android:id="@+id/emptyView"

@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.feicuiedu.gitdroid"
-        minSdkVersion 19
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -48,7 +48,10 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     // 拦截器
     compile 'com.squareup.okhttp3:logging-interceptor:3.5.0'
-
     // retrofit
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    //下拉刷新上拉加载
+    compile 'in.srain.cube:ptr-load-more:1.0.2'
+    //picasso展示图片
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

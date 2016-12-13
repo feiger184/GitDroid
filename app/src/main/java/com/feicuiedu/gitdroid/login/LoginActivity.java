@@ -1,4 +1,5 @@
 package com.feicuiedu.gitdroid.login;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,15 +11,16 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.feicuiedu.gitdroid.MainActivity;
 import com.feicuiedu.gitdroid.R;
+import com.feicuiedu.gitdroid.commons.ActivityUtils;
 import com.feicuiedu.gitdroid.network.GithubApi;
-import com.feicuiedu.gitdroid.network.GithubClient;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.droidsonroids.gif.GifImageView;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements LoginView {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -26,6 +28,8 @@ public class LoginActivity extends AppCompatActivity {
     WebView mWebView;
     @BindView(R.id.gifImageView)
     GifImageView mGifImageView;
+    private LoginPresenter loginPresenter;
+    private ActivityUtils activityUtils;
 
     /**
      * 1. 申请开发者应用，得到两个应用信息：CLIENT_ID,CLIENT_SECRET
@@ -38,12 +42,12 @@ public class LoginActivity extends AppCompatActivity {
      * 2. 授权，根据申请时填写的Callback，给一个临时的授权码code
      * 3. code换取Token：进行网络请求
      * 4. 根据Token获取用户信息
-     *
+     * <p>
      * 1. code 获取Token
-     *      1. 构建请求：POST 表单提交(键值对)
-     *      2. 执行请求：在Client类里面实现了方法
-     *                  执行
-     *                  利用MVP模式来进行
+     * 1. 构建请求：POST 表单提交(键值对)
+     * 2. 执行请求：在Client类里面实现了方法
+     * 执行
+     * 利用MVP模式来进行
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,9 @@ public class LoginActivity extends AppCompatActivity {
     public void onContentChanged() {
         super.onContentChanged();
         ButterKnife.bind(this);
+        activityUtils = new ActivityUtils(this);
+
+        loginPresenter = new LoginPresenter(this);
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -84,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private WebViewClient mWebViewClient = new WebViewClient(){
+    private WebViewClient mWebViewClient = new WebViewClient() {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
@@ -92,26 +99,48 @@ public class LoginActivity extends AppCompatActivity {
             Uri uri = Uri.parse(url);
 
             // 通过判断
-            if (GithubApi.CALL_BACK.equals(uri.getScheme())){
+            if (GithubApi.CALL_BACK.equals(uri.getScheme())) {
+
                 String code = uri.getQueryParameter("code");
                 // 得到了我们的code值,获取Token
-                Log.e("TAG","临时的授权码："+code);
+                Log.e("TAG", "临时的授权码：" + code);
                 // 根据code去进行请求得到Token
-                new LoginPresenter().login(code);
+                loginPresenter.login(code);
                 return true;
             }
             return super.shouldOverrideUrlLoading(view, url);
         }
     };
 
-    private WebChromeClient mWebChromeClient = new WebChromeClient(){
+    private WebChromeClient mWebChromeClient = new WebChromeClient() {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
 
             // 页面加载出来之后，动画隐藏
-            if (newProgress>=100){
+            if (newProgress >= 100) {
                 mGifImageView.setVisibility(View.GONE);
             }
         }
     };
+
+    @Override
+    public void showProgress() {
+        mGifImageView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showMessage(String msg) {
+        activityUtils.showToast(msg);
+    }
+
+    @Override
+    public void resetWeb() {
+        initWebView();
+    }
+
+    @Override
+    public void navigationToMain() {
+        activityUtils.startActivity(MainActivity.class);
+        finish();
+    }
 }
