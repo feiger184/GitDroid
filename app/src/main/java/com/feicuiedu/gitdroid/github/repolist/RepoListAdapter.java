@@ -11,6 +11,8 @@ import com.feicuiedu.gitdroid.R;
 import com.feicuiedu.gitdroid.github.repolist.model.Repo;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import butterknife.BindView;
@@ -24,8 +26,21 @@ public class RepoListAdapter extends BaseAdapter {
 
     private List<Repo> list;
 
-    @Override
+    public RepoListAdapter() {
+        this.list = new ArrayList<>();
+    }
 
+    public void clear() {
+        list.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addALL(Collection<Repo> repos) {
+        list.addAll(repos);
+        notifyDataSetChanged();
+
+    }
+    @Override
     public int getCount() {
         return list == null ? 0 : list.size();
     }

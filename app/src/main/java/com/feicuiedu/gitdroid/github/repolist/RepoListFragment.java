@@ -10,17 +10,24 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.feicuiedu.gitdroid.R;
+import com.feicuiedu.gitdroid.commons.ActivityUtils;
 import com.feicuiedu.gitdroid.github.repolist.model.Language;
+import com.feicuiedu.gitdroid.github.repolist.model.Repo;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.srain.cube.views.ptr.PtrClassicFrameLayout;
+import in.srain.cube.views.ptr.PtrDefaultHandler2;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.header.StoreHouseHeader;
 
 /**
  * Created by gqq on 2016/12/2.
  */
 
-public class RepoListFragment extends Fragment {
+public class RepoListFragment extends Fragment implements RepoListView {
 
     private static String KEYLANGUAGE = "key_language";
     @BindView(R.id.lvRepos)
@@ -32,13 +39,20 @@ public class RepoListFragment extends Fragment {
     @BindView(R.id.errorView)
     TextView errorView;
 
+    private RepoListAdapter repoListAdapter;
+    private ActivityUtils activityUtils;
+    private RepoListPresenter repoListPresenter;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_repo_list, container, false);
 
-        RepoListPresenter presenter = new RepoListPresenter(getLanguage(),this);
+        repoListPresenter = new RepoListPresenter(getLanguage(), this);
+
+        activityUtils = new ActivityUtils(this);
+
         ButterKnife.bind(this, view);
         return view;
     }
@@ -66,8 +80,102 @@ public class RepoListFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RepoListAdapter adapter = new RepoListAdapter();
-        lvRepos.setAdapter(adapter);
+        repoListAdapter = new RepoListAdapter();
+        lvRepos.setAdapter(repoListAdapter);
 
+        //判断有没有数据，没有数据的话，自动刷新
+        if (repoListAdapter.getCount() == 0) {
+            ptrClassicFrameLayout.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // 自动刷新
+                    ptrClassicFrameLayout.autoRefresh();
+                }
+            }, 200);
+        }
+
+        initRefresh();
+    }
+
+
+    /*
+    * 初始化加载数据
+    * */
+    private void initRefresh() {
+
+        ptrClassicFrameLayout.setLastUpdateTimeRelateObject(this);//刷新间隔比较短，不触发刷新
+
+        ptrClassicFrameLayout.setDurationToClose(1500);//设置关闭视图时间
+
+
+        //设置头布局
+
+        StoreHouseHeader header = new StoreHouseHeader(getContext());
+        header.initWithString("I LIKE ANDROID");
+        header.setPadding(0, 30, 0, 30);
+
+        ptrClassicFrameLayout.setHeaderView(header);
+
+        ptrClassicFrameLayout.addPtrUIHandler(header);
+
+        //设置背景
+        ptrClassicFrameLayout.setBackgroundResource(R.color.colorRefresh);
+
+        // 设置监听：我们使用的是既有刷新又有加载的
+        ptrClassicFrameLayout.setPtrHandler(new PtrDefaultHandler2() {
+
+
+            // 上拉加载开始的方法
+            @Override
+            public void onLoadMoreBegin(PtrFrameLayout frame) {
+                repoListPresenter.loadMore();
+
+            }
+
+            // 下拉刷新开始的方法
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+                repoListPresenter.refreshdata();
+            }
+        });
+
+    }
+
+    @Override
+    public void addRefreshData(List<Repo> repos) {
+        repoListAdapter.clear();
+        repoListAdapter.addALL(repos);
+        repoListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void addLoadMore(List<Repo> repos) {
+        repoListAdapter.addALL(repos);
+        repoListAdapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void stopMoreData() {
+        ptrClassicFrameLayout.refreshComplete(); //刷新停止
+    }
+
+    @Override
+    public void showEmptyView() {
+        ptrClassicFrameLayout.setVisibility(View.GONE);
+        emptyView.setVisibility(View.VISIBLE);
+        errorView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showErrorView() {
+        ptrClassicFrameLayout.setVisibility(View.GONE);
+        emptyView.setVisibility(View.GONE);
+        errorView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showMessage(String msg) {
+        activityUtils.showToast(msg);
     }
 }

@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import com.feicuiedu.gitdroid.commons.ActivityUtils;
 import com.feicuiedu.gitdroid.github.HotRepoFragment;
 import com.feicuiedu.gitdroid.login.LoginActivity;
+import com.feicuiedu.gitdroid.login.model.UserRepo;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,8 +42,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // 设置当前视图(更改了当前视图内容,将导致onContentChanged方法触发)
         setContentView(R.layout.activity_main);
 
 
@@ -53,18 +53,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mActivityUtils = new ActivityUtils(this);
         ButterKnife.bind(this);
 
-        /**
-         * 需要处理的视图
-         * 1. toolbar：主题是没有ActionBar，所以展示的时候toolbar作为actionBar展示
-         * 2. DrawerLayout：
-         * 3. NavigationView
-         */
-
         //设置ActionBar
         setSupportActionBar(mToolbar);
 
         // 设置监听
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,mDrawerLayout,mToolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         toggle.syncState();// 同步状态
         // 设置DrawerLayout的侧滑监听
         mDrawerLayout.addDrawerListener(toggle);
@@ -90,12 +83,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * 1. 创建Fragment
      * 2. 切换Fragment:提供一个方法，根据传入的Fragment来进行切换
      * 3. 展示：1. 默认展示 2. 切换时
-     *
      */
-    private void replaceFragment(Fragment fragment){
+    private void replaceFragment(Fragment fragment) {
         FragmentManager supportFragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container,fragment);
+        fragmentTransaction.replace(R.id.container, fragment);
         fragmentTransaction.commit();
     }
 
@@ -103,20 +95,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        // TODO: 2016/12/1 展示登录用户的信息
+        if (UserRepo.isEmpty()) {
+            mBtnLogin.setText(R.string.login_github);
+            return;
+        }
+
+        mBtnLogin.setText(R.string.switch_account);
+
+
+        getSupportActionBar().setTitle(UserRepo.getUser().getLogin());
+
+        Picasso.with(this).load(UserRepo.getUser().getAvatarUrl()).into(mIvIcon);
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        if (item.isChecked()){
+        if (item.isChecked()) {
             item.setChecked(false);
         }
-        // TODO: 2016/12/1 切换视图
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
 
             // 最热门
             case R.id.github_hot_repo:
-                if (mHotRepoFragment.isAdded()){
+                if (mHotRepoFragment.isAdded()) {
                     replaceFragment(mHotRepoFragment);
                 }
                 break;
@@ -133,18 +134,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
 
-        // 选择某一项之后，切换Fragment，关闭抽屉
+
         mDrawerLayout.closeDrawer(GravityCompat.START);
 
-        // 返回true,代表该菜单项已经被选择
+
         return true;
     }
 
     @Override
     public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
-        }else {
+        } else {
             super.onBackPressed();
         }
     }
